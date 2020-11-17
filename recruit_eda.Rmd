@@ -1,0 +1,90 @@
+---
+title: "R Notebook"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(cfbscrapR)
+```
+
+get all data into a single csv
+```{r}
+# years <- seq(2000,2020)
+# recruiting_player <- NULL
+# 
+# for(i in years) {
+#   recruiting_player = rbind(recruiting_player, cfb_recruiting_player(year = i))
+# }
+# 
+# write.csv(recruiting_player, 'recruiting_player.csv')
+
+# years <- seq(2000,2020)
+# recruiting_team <- NULL
+# 
+# for(i in years) {
+#   recruiting_team = rbind(recruiting_team, cfb_recruiting_team(year = i))
+# }
+# 
+# write.csv(recruiting_team, 'recruiting_team.csv')
+
+# years <- seq(2000,2020)
+# recruiting_position <- NULL
+# 
+# for(i in years) {
+#   rec_position = cfb_recruiting_position(start_year = i, end_year = i)
+#   rec_year = rep(i, nrow(rec_position))
+#   rec_position = cbind(rec_year, rec_position)
+#   recruiting_position = rbind(recruiting_position, rec_position)
+#   rec_position = NA
+#   rec_year = NA
+# }
+# 
+# write.csv(recruiting_position, 'recruiting_position.csv')
+
+# years <- seq(2000,2020)
+# records <- NULL
+# 
+# for(i in years) {
+#   records = rbind(records, cfb_game_records(year = i))
+# }
+# 
+# write.csv(records, 'records.csv')
+```
+
+read in csv
+```{r}
+setwd('C:/Users/kingl/Desktop/Projects/football/recruiting_analytics/data/')
+recruiting_player <- read.csv('recruiting_player.csv')[,-1]
+recruiting_team <- read.csv('recruiting_team.csv')[,-1]
+recruiting_position <- read.csv('recruiting_position.csv')[,-1]
+records <- read.csv('records.csv')[,-1]
+
+teams <- cfb_team_info()
+```
+
+explore data
+```{r}
+recruiting_player %>% 
+  group_by(year) %>% 
+  summarize(count = n())
+```
+
+```{r}
+recruiting_player %>% 
+  group_by(state_province) %>% 
+  summarize(count = n(),
+            avg_rtg = mean(rating)) %>% 
+  View()
+```
+
+```{r}
+recruiting_player %>% 
+  select(committed_to) %>% 
+  unique() %>% 
+  left_join(teams[, c('school', 'conference')], by = c('committed_to' = 'school')) %>% 
+  View()
+
+cfb_team_info() %>% View()
+```
+
